@@ -1,7 +1,7 @@
 package org.acme;
 
 
-public class createPersonrequest
+public class createPersonRequest
 {
   public String name;
   public int age;
@@ -9,7 +9,7 @@ public class createPersonrequest
   public boolean alive;
   public Status status;
 
-  public Person requestToPerson(Person person)
+  public Person toPerson(Person person)
   {
     person.name = request.name;
     person.age = request.age;
