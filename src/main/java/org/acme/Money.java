@@ -1,0 +1,7 @@
+
+
+@Embeddable
+public class Money
+{
+  
+}

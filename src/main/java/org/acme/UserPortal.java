@@ -3,7 +3,7 @@ package org.acme;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.*;
 import java.util.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.transaction.Transactional;
@@ -13,11 +13,10 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class GreetingResource 
+public class UserPortal 
 {
 
     @GET
-    @Path("/list")
     public List<Person> listPersons() 
     {
         List<Person> allPersons = Person.listAll();
@@ -26,8 +25,7 @@ public class GreetingResource
 
     @POST
     @Transactional
-    @Path("/create")
-    public Person createUser(createPersonRequest request)
+    public Person createUser(PersonRequest request)
     {
       Person person = new Person();
       person = request.toPerson(person);
@@ -37,9 +35,9 @@ public class GreetingResource
     }
 
     @PUT
-    @Path("/update/{id}")
+    @Path("/{id}")
     @Transactional
-    public Person updatePerson(@PathParam("id") long id, createPersonRequest request)
+    public Person updatePerson(@PathParam("id") long id, PersonRequest request)
     {
       Person person = Person.findById(id);
       if (person != null)
@@ -49,5 +47,4 @@ public class GreetingResource
 
       return person;
     }
-
 }

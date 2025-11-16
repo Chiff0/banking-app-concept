@@ -1,7 +1,7 @@
 package org.acme;
 
 
-public class createPersonRequest
+public class PersonRequest
 {
   public String name;
   public int age;

@@ -27,19 +27,19 @@ import java.util.*;
  */
 
 @Entity
-public class Person extends PanacheEntity
+public class Account extends PanacheEntity
 {
   public String name;
   public int age;
   public boolean alive;
   public Status status;
 
-  public static Person findByName (String name)
+  public static Account findByName (String name)
   {
     return find ("name", name).firstResult();
   }
 
-  public static List<Person> findMarried ()
+  public static List<Account> findMarried ()
   {
     return find ("status", Status.Married).list();
   }
