@@ -9,13 +9,15 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 
+// TODO: Need a way to get account number and amount
 @Path("/transaction")
 @RequestScoped
 @Transactional
 public class Transaction
 {
   @POST
-  public void deposit(PersonRequest request, Money amount)
+  // TODO: Need a way to get account number and amount
+  public void deposit(AccountRequest request, Money amount)
   {
     Account account = new Account();
     account = request.toAccount(account);
