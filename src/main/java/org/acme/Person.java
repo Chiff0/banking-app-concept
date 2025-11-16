@@ -5,26 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.util.*;
+import java.math.BigDecimal;
 
-/**
- * Example JPA entity defined as a Panache Entity.
- * An ID field of Long type is provided, if you want to define your own ID field extends <code>PanacheEntityBase</code> instead.
- *
- * This uses the active record pattern, you can also use the repository pattern instead:
- * .
- *
- * Usage (more example on the documentation)
- *
- * {@code
- *     public void doSomething() {
- *         MyEntity entity1 = new MyEntity();
- *         entity1.field = "field-1";
- *         entity1.persist();
- *
- *         List<MyEntity> entities = MyEntity.listAll();
- *     }
- * }
- */
+
 
 @Entity
 public class Account extends PanacheEntity
@@ -33,15 +16,18 @@ public class Account extends PanacheEntity
   public int age;
   public boolean alive;
   public Status status;
+  public BigDecimal balance;
+  public AccountType type;
 
-  public static Account findByName (String name)
+
+  public static Account findByName(String name)
   {
-    return find ("name", name).firstResult();
+    return find("name", name).firstResult();
   }
 
-  public static List<Account> findMarried ()
+  public static List<Account> findMarried()
   {
-    return find ("status", Status.Married).list();
+    return find("status", Status.Married).list();
   }
   
 }
