@@ -31,7 +31,6 @@ public class Person extends PanacheEntity
 {
   public String name;
   public int age;
-  public int id;
   public boolean alive;
   public Status status;
 

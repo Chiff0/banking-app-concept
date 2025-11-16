@@ -18,10 +18,10 @@ public class GreetingResource
 
     @GET
     @Path("/list")
-    public String listPersons() 
+    public List<Person> listPersons() 
     {
         List<Person> allPersons = Person.listAll();
-        return allPersons.toString();
+        return allPersons;
     }
 
     @POST
@@ -39,7 +39,7 @@ public class GreetingResource
     @PUT
     @Path("/update/{id}")
     @Transactional
-    public Person updatePerson(@PathParam("id") int id, createPersonRequest request)
+    public Person updatePerson(@PathParam("id") long id, createPersonRequest request)
     {
       Person person = Person.findById(id);
       if (person != null)
