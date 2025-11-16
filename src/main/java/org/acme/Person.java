@@ -2,6 +2,8 @@ package org.acme;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import java.util.*;
 
 /**
@@ -29,8 +31,8 @@ public class Person extends PanacheEntity
 {
   public String name;
   public int age;
-  public int idNumber;
-  public bool alive;
+  public int id;
+  public boolean alive;
   public Status status;
 
   public static Person findByName (String name)
@@ -40,7 +42,7 @@ public class Person extends PanacheEntity
 
   public static List<Person> findMarried ()
   {
-    return find ("status", Status.Married);
+    return find ("status", Status.Married).list();
   }
   
 }
