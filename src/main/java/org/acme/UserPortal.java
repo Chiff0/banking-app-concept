@@ -41,6 +41,21 @@ public class UserPortal
       return account;
     }
 
+    @POST
+    @Transactional
+    @Path("/create/customer")
+    public Customer createCustomer(CustomerRequest request)
+    {
+      Customer customer = new Customer();
+      customer.name = request.name;
+      customer.dateOfBirth = request.dateOfBirth;
+      customer.address = request.address;
+      customer.IDNumber = generateCustomerNumber();
+
+      customer.persist();
+      return customer;
+    }
+
     @PUT
     @Path("/update/{id}")
     @Transactional
@@ -60,4 +75,9 @@ public class UserPortal
     {
       return "ACC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
+    private String generateCustomerNumber() 
+    {
+      return "USR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
 }
