@@ -8,14 +8,14 @@ import java.math.BigDecimal;
 public class CurrencyConverter
 {
 
-  private static final Map<Currency, Map<Currency, BigDecimal>> exchangeRates = new Map<>(Currency.class);
+  private static final Map<Currency, Map<Currency, BigDecimal>> exchangeRates = new EnumMap<>(Currency.class);
 
   
   static 
   {
     for (Currency from : Currency.values())
     {
-      exchangeRates.put(from, new EnumMap<>(Currency.class))
+      exchangeRates.put(from, new EnumMap<>(Currency.class));
     }
 
       setRate(Currency.EUR, Currency.USD, 1.0825);

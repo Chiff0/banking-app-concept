@@ -12,22 +12,19 @@ import java.math.BigDecimal;
 @Entity
 public class Account extends PanacheEntity
 {
-  public String name;
-  public int age;
-  public boolean alive;
-  public Status status;
-  public BigDecimal balance;
+  public Money balance;
+
+  @Enumerated(EnumType.STRING)
   public AccountType type;
+  @Enumerated(EnumType.STRING)
+  public Status status;
+
+  @Column(unique = true, nullable = false)
+  public String accountNumber;
+
+  @ManyToOne
+  public Customer owner;
 
 
-  public static Account findByName(String name)
-  {
-    return find("name", name).firstResult();
-  }
-
-  public static List<Account> findMarried()
-  {
-    return find("status", Status.Married).list();
-  }
   
 }

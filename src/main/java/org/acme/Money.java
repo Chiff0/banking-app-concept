@@ -5,20 +5,20 @@ import java.math.BigDecimal;
 @Embeddable
 public class Money
 {
-  public BigDecimal amount;
+  public double amount;
   public Currency currency;
 
   public void add(Money money)
   {
     if (money.currency == this.currency)
     {
-      this.amount += money.amount;
+      return this.amount + money.amount;
     }
     else 
     {
       @Inject CurrencyConverter converter;
       money = converter.convert(money, this.currency);
-      this.amount += money.amount;
+      return this.amount + money.amount;
     }
   }
   public void subtract(Money money)

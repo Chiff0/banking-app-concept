@@ -1,4 +1,4 @@
-Package org.acme;
+package org.acme;
 
 public enum Currency
 {

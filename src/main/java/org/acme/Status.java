@@ -2,6 +2,7 @@ package org.acme;
 
 public enum Status
 {
-  Married, 
-  Single
+  Frozen, 
+  Active, 
+  Closed
 }

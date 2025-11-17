@@ -7,9 +7,10 @@ import jakarta.enterprise.context.*;
 import java.util.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.transaction.Transactional;
+import java.util.UUID;
 
 
-@Path("/users")
+@Path("/API/users")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -17,7 +18,7 @@ public class UserPortal
 {
 
     @GET
-    public List<Person> listPersons() 
+    public List<Account> listAllAccounts() 
     {
         List<Account> allAccounts = Account.listAll();
         return allAccounts;
@@ -25,26 +26,38 @@ public class UserPortal
 
     @POST
     @Transactional
-    public Account createUser(AccountRequest account)
+    @Path("/create/account")
+    public Account createAccount(AccountRequest request)
     {
       Account account = new Account();
-      account = request.toAccount(account);
-      account.persist();
+      account.accountNumber = generateAccountNumber();
+      account.owner = Customer.findById(request.ownerID);
+      account.type = request.type;
+      account.balance = new Money(0.0, request.currency);
+      account.status = Status.Active; 
 
+
+      account.persist();
       return account;
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/update/{id}")
     @Transactional
     public Account updateAccount(@PathParam("id") long id, AccountRequest request)
     {
       Account account = Account.findById(id);
       if (account != null)
       {
-        account = request.toAccount(account);
+        account.owner = Account.findById(request.ownerID);
+        account.type = request.type;
       }
 
       return account;
+    }
+
+    private String generateAccountNumber() 
+    {
+      return "ACC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 }
