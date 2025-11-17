@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 public class CurrencyConverter
 {
 
-  private static final Map<Currency, Map<Currency, Double>> exchangeRates = new Map<>(Currency.class);
+  private static final Map<Currency, Map<Currency, BigDecimal>> exchangeRates = new Map<>(Currency.class);
 
   
   static 
@@ -39,7 +39,7 @@ public class CurrencyConverter
     
   }
 
-  static void setRate(Currency from, Currency to, double rate)
+  static void setRate(Currency from, Currency to, BigDecimal rate)
   {
     exchangeRates.get(from).put(to, rate);
   }
@@ -52,19 +52,26 @@ public class CurrencyConverter
       {
         if (from == to)
         {
-          setRate(from, to, 1)
+          setRate(from, to, 1.0)
         }
         else if (!exchangeRates.get(to).contains(from) && exchangeRates.get(from).contains(to))
         {
-          setRate(to, from, 1 / exchangeRates.get(to).get(from));
+          setRate(to, from, 1.0 / exchangeRates.get(to).get(from));
         }
       }
     }
   }
 
-  static BigDecimal exchange()
+  static Money exchange(Money money, Currency currency)
   {
-    // TODO: Implement exchanging
+    Money exchanged = new Money();
+    exchanged.Currency = currency;
+
+    rate = exchangeRates.get(money.Currency).get(currency);
+
+    exchanged.amount = rate * money.amount;
+
+    return exchanged;
   }
 
 }

@@ -8,22 +8,24 @@ public class Money
   public BigDecimal amount;
   public Currency currency;
 
-  public add(Money money)
+  public void add(Money money)
   {
     if (money.currency == this.currency)
     {
-      return money.amount + this.amount;
+      this.amount += money.amount;
     }
     else 
     {
-      this = this.convert(money);
-      return money.amount + this.amount;
+      @Inject CurrencyConverter converter;
+      money = converter.convert(money, this.currency);
+      this.amount += money.amount;
     }
   }
-
-  public convert(Money money)
+  
+  public void convert(Currency currency)
   {
-    // TODO: Implement the conversion part
+    @Inject CurrencyConverter converter;
+    
+    this = converter.convert(this, currency);
   }
-
 }
