@@ -9,7 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 
-// TODO: Need a way to get account number and amount
+
 @Path("/transaction")
 @RequestScoped
 @Transactional
