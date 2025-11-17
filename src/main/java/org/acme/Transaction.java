@@ -17,6 +17,7 @@ public class Transaction
 {
   @POST
   // TODO: Need a way to get account number and amount
+  @Path("/{amount}")
   public void deposit(AccountRequest request, Money amount)
   {
     Account account = new Account();

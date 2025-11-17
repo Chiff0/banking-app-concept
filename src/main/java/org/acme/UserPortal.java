@@ -19,32 +19,32 @@ public class UserPortal
     @GET
     public List<Person> listPersons() 
     {
-        List<Person> allPersons = Person.listAll();
-        return allPersons;
+        List<Account> allAccounts = Account.listAll();
+        return allAccounts;
     }
 
     @POST
     @Transactional
-    public Person createUser(PersonRequest request)
+    public Account createUser(AccountRequest account)
     {
-      Person person = new Person();
-      person = request.toPerson(person);
-      person.persist();
+      Account account = new Account();
+      account = request.toAccount(account);
+      account.persist();
 
-      return person;
+      return account;
     }
 
     @PUT
     @Path("/{id}")
     @Transactional
-    public Person updatePerson(@PathParam("id") long id, PersonRequest request)
+    public Account updateAccount(@PathParam("id") long id, AccountRequest request)
     {
-      Person person = Person.findById(id);
-      if (person != null)
+      Account account = Account.findById(id);
+      if (account != null)
       {
-        person = request.toPerson(person);
+        account = request.toAccount(account);
       }
 
-      return person;
+      return account;
     }
 }
