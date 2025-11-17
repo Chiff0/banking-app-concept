@@ -10,18 +10,26 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 
 
-@Path("/transaction")
+@Path("/API/transactios")
 @RequestScoped
 @Transactional
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class Transaction
 {
   @POST
-  // TODO: Need a way to get account number and amount
-  @Path("/{amount}")
+  @Path("/deposit")
   public void deposit(AccountRequest request, Money amount)
   {
     Account account = new Account();
     account = request.toAccount(account);
     account.balance = money.add(account.balance);
+  }
+
+  @PUT
+  @Path("/transfer")
+  public static void transfer(TransferRequest request)
+  { 
+    // TODO: Implement transfering
   }
 }
