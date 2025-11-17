@@ -26,10 +26,15 @@ public class Transaction
     account.balance = money.add(account.balance);
   }
 
-  @PUT
+  @POST
   @Path("/transfer")
   public static void transfer(TransferRequest request)
-  { 
-    // TODO: Implement transfering
+  {
+    Account from = request.from();
+    Account to = request.to();
+    Money amount = request.amount();
+
+    from.subtract(amount);
+    to.add(amount);
   }
 }
