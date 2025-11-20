@@ -23,6 +23,8 @@ public class Account extends PanacheEntity
   @ManyToOne
   public Customer owner;
 
-
-  
+  public static Account findByAccountNumber(String accountNumber)
+  {
+    return Account.find("accountNumber", accountNumber).firstResult();
+  }
 }

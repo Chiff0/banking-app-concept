@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import java.util.UUID;
 
 
-@Path("/API/users")
+@Path("/API")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -18,20 +18,20 @@ public class UserPortal
 {
 
     @GET
-    public List<Account> listAllAccounts() 
+    public List<Customer> listAllCustomers() 
     {
-        List<Account> allAccounts = Account.listAll();
-        return allAccounts;
+        List<Customer> allCustomers = Customer.listAll();
+        return allCustomers;
     }
 
     @POST
     @Transactional
-    @Path("/create/account")
+    @Path("/account")
     public Account createAccount(AccountRequest request)
     {
       Account account = new Account();
       account.accountNumber = generateAccountNumber();
-      account.owner = Customer.findById(request.ownerID);
+      account.owner = Customer.findByIDNumber(request.IDNumber);
       account.type = request.type;
       account.balance = new Money(0.0, request.currency);
       account.status = Status.Active; 
@@ -43,7 +43,7 @@ public class UserPortal
 
     @POST
     @Transactional
-    @Path("/create/customer")
+    @Path("/customer")
     public Customer createCustomer(CustomerRequest request)
     {
       Customer customer = new Customer();
@@ -57,14 +57,14 @@ public class UserPortal
     }
 
     @PUT
-    @Path("/update/{id}")
+    @Path("/{id}")
     @Transactional
     public Account updateAccount(@PathParam("id") long id, AccountRequest request)
     {
       Account account = Account.findById(id);
       if (account != null)
       {
-        account.owner = Account.findById(request.ownerID);
+        account.owner = Customer.findByIDNumber(request.IDNumber);
         account.type = request.type;
       }
 
