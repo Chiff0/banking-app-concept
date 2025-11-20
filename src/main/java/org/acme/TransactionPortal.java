@@ -24,7 +24,7 @@ public class TransactionPortal
     
     if (destination != null)
     {
-      newTransaction.accountTo = destination.accountNumber;
+      newTransaction.accountTo = destination;
       newTransaction.status = TransactionStatus.Completed;
       destination.balance.amount += request.amount.amount;
     }

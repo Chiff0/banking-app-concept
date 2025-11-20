@@ -18,11 +18,23 @@ public class UserPortal
 {
 
     @GET
+    @Path("/users")
     public List<Customer> listAllCustomers() 
     {
         List<Customer> allCustomers = Customer.listAll();
         return allCustomers;
     }
+
+    
+    @GET
+    @Path("/accounts")
+    public List<Customer> listAllAccounts() 
+    {
+        List<Customer> allAccounts = Account.listAll();
+        return allAccounts;
+    }
+
+    
 
     @POST
     @Transactional
