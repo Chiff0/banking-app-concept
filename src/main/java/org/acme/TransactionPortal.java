@@ -36,6 +36,42 @@ public class TransactionPortal
     newTransaction.persist();
     return newTransaction; 
   }
+
+  @POST
+  @Path("/transfer")
+  public TransactionHistory transfer(TransferRequest request)
+  {
+    Account accountFrom = Account.findByAccountNumber(request.fromID);
+    Account accountTo = Account.findByAccountNumber(request.toID);
+    
+    TransactionHistory newTransaction = new TransactionHistory();
+    newTransaction.type = TransactionType.Transfer;
+    newTransaction.amount = request.amount;
+
+    if (accountFrom != null && accountTo != null)
+    {
+      newTransaction.accountFrom = accountFrom;
+      newTransaction.accountTo = accountTo;
+
+      if (accountFrom.balance.amount >= request.amount.amount)
+      {
+        accountFrom.balance.amount -= request.amount.amount;
+        accountTo.balance.amount += request.amount.amount;
+
+        newTransaction.status = TransactionStatus.Completed;
+        
+        newTransaction.persist();
+        return newTransaction;
+      }
+    }
+
+    newTransaction.status = TransactionStatus.Declined;
+
+    newTransaction.persist();
+    return newTransaction;
+
+  }
+
 }
 
 
