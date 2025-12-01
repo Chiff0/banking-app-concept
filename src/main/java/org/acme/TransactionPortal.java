@@ -26,12 +26,19 @@ public class TransactionPortal
     Account destination = Account.findByAccountNumber(request.accountNumber);
     newTransaction.type = TransactionType.Deposit; 
     newTransaction.amount = request.amount;
-    
+
+    Money sourceAdd = request.amount;
+
+    if (destination.balance.currency != request.amount.currency)
+    {
+      sourceAdd = converter.convert(request.amount, destination.balance.currency);
+    }
+
     if (destination != null)
     {
       newTransaction.accountTo = destination;
       newTransaction.status = TransactionStatus.Completed;
-      destination.balance.amount += request.amount.amount;
+      destination.balance.amount += sourceAdd.amount;
     }
     else 
     {
@@ -48,18 +55,24 @@ public class TransactionPortal
     {
       TransactionHistory newTransaction = new TransactionHistory();
       Account destination = Account.findByAccountNumber(request.accountNumber);
-      newTransaction.type = TransactionType.Withdrawal; 
+      newTransaction.type = TransactionType.Withdrawal;
       newTransaction.amount = request.amount;
+
+      Money sourceSubtract = request.amount;
+
+      if (destination.balance.currency != request.amount.currency)
+      {
+        sourceSubtract = converter.convert(request.amount, destination.balance.currency);
+      }
       
       if (destination != null)
       {
         newTransaction.accountTo = destination;
         newTransaction.status = TransactionStatus.Completed;
-        destination.balance.amount += request.amount.amount;
         
-        if (destination.balance.amount >= request.amount.amount)
+        if (destination.balance.amount >= sourceSubtract.amount)
         {
-          destination.balance.amount -= request.amount.amount; 
+          destination.balance.amount -= sourceSubtract.amount; 
 
           newTransaction.status = TransactionStatus.Completed;
 

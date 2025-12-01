@@ -1,0 +1,280 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Banking App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      input,
+      select,
+      button {
+        padding: 10px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .account-card {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+      .success {
+        color: green;
+        padding: 10px;
+        background: #d4edda;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      .error {
+        color: red;
+        padding: 10px;
+        background: #f8d7da;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Banking Application</h1>
+
+    <!-- Create Customer -->
+    <div class="container">
+      <h2>Create Customer</h2>
+      <input type="text" id="customerName" placeholder="Name" />
+      <input type="date" id="customerDOB" />
+      <input type="text" id="customerAddress" placeholder="Address" />
+      <button onclick="createCustomer()">Create Customer</button>
+      <div id="customerResult"></div>
+    </div>
+
+    <!-- Create Account -->
+    <div class="container">
+      <h2>Create Account</h2>
+      <input
+        type="text"
+        id="accountCustomerID"
+        placeholder="Customer ID (USR-...)"
+      />
+      <select id="accountType">
+        <option value="Personal">Personal</option>
+        <option value="Business">Business</option>
+        <option value="Child">Child</option>
+      </select>
+      <select id="accountCurrency">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="JPY">JPY</option>
+        <option value="CNY">CNY</option>
+        <option value="PLN">PLN</option>
+        <option value="CAD">CAD</option>
+        <option value="AUD">AUD</option>
+      </select>
+      <button onclick="createAccount()">Create Account</button>
+      <div id="accountResult"></div>
+    </div>
+
+    <!-- Deposit -->
+    <div class="container">
+      <h2>Deposit</h2>
+      <input
+        type="text"
+        id="depositAccount"
+        placeholder="Account Number (ACC-...)"
+      />
+      <input type="number" id="depositAmount" placeholder="Amount" />
+      <select id="depositCurrency">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="JPY">JPY</option>
+        <option value="CNY">CNY</option>
+        <option value="PLN">PLN</option>
+        <option value="CAD">CAD</option>
+        <option value="AUD">AUD</option>
+      </select>
+      <button onclick="deposit()">Deposit</button>
+      <div id="depositResult"></div>
+    </div>
+
+    <!-- Transfer -->
+    <div class="container">
+      <h2>Transfer</h2>
+      <input
+        type="text"
+        id="transferFrom"
+        placeholder="From Account (ACC-...)"
+      />
+      <input type="text" id="transferTo" placeholder="To Account (ACC-...)" />
+      <input type="number" id="transferAmount" placeholder="Amount" />
+      <select id="transferCurrency">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="JPY">JPY</option>
+        <option value="CNY">CNY</option>
+        <option value="PLN">PLN</option>
+        <option value="CAD">CAD</option>
+        <option value="AUD">AUD</option>
+      </select>
+      <button onclick="transfer()">Transfer</button>
+      <div id="transferResult"></div>
+    </div>
+
+    <!-- View Accounts -->
+    <div class="container">
+      <h2>All Accounts</h2>
+      <button onclick="loadAccounts()">Refresh Accounts</button>
+      <div id="accountsList"></div>
+    </div>
+
+    <script>
+      const API = "http://localhost:8080/API";
+
+      async function createCustomer() {
+        const data = {
+          name: document.getElementById("customerName").value,
+          dateOfBirth: document.getElementById("customerDOB").value,
+          address: document.getElementById("customerAddress").value,
+        };
+
+        try {
+          const response = await fetch(`${API}/customer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          document.getElementById("customerResult").innerHTML =
+            `<div class="success">Customer created! ID: ${result.idnumber}</div>`;
+        } catch (error) {
+          document.getElementById("customerResult").innerHTML =
+            `<div class="error">Error: ${error}</div>`;
+        }
+      }
+
+      async function createAccount() {
+        const data = {
+          IDNumber: document.getElementById("accountCustomerID").value,
+          type: document.getElementById("accountType").value,
+          currency: document.getElementById("accountCurrency").value,
+        };
+
+        try {
+          const response = await fetch(`${API}/account`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          document.getElementById("accountResult").innerHTML =
+            `<div class="success">Account created! Number: ${result.accountNumber}</div>`;
+        } catch (error) {
+          document.getElementById("accountResult").innerHTML =
+            `<div class="error">Error: ${error}</div>`;
+        }
+      }
+
+      async function deposit() {
+        const data = {
+          accountNumber: document.getElementById("depositAccount").value,
+          amount: {
+            amount: parseFloat(document.getElementById("depositAmount").value),
+            currency: document.getElementById("depositCurrency").value,
+          },
+        };
+
+        try {
+          const response = await fetch(`${API}/deposit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          document.getElementById("depositResult").innerHTML =
+            `<div class="success">Deposit ${result.status}!</div>`;
+          loadAccounts();
+        } catch (error) {
+          document.getElementById("depositResult").innerHTML =
+            `<div class="error">Error: ${error}</div>`;
+        }
+      }
+
+      async function transfer() {
+        const data = {
+          fromID: document.getElementById("transferFrom").value,
+          toID: document.getElementById("transferTo").value,
+          amount: {
+            amount: parseFloat(document.getElementById("transferAmount").value),
+            currency: document.getElementById("transferCurrency").value,
+          },
+        };
+
+        try {
+          const response = await fetch(`${API}/transfer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          document.getElementById("transferResult").innerHTML =
+            `<div class="success">Transfer ${result.status}!</div>`;
+          loadAccounts();
+        } catch (error) {
+          document.getElementById("transferResult").innerHTML =
+            `<div class="error">Error: ${error}</div>`;
+        }
+      }
+
+      async function loadAccounts() {
+        try {
+          const response = await fetch(`${API}/accounts`);
+          const accounts = await response.json();
+
+          let html = "";
+          accounts.forEach((account) => {
+            html += `
+                        <div class="account-card">
+                            <strong>${account.accountNumber}</strong> - ${account.type}<br>
+                            Balance: ${account.balance.amount} ${account.balance.currency}<br>
+                            Owner: ${account.owner.name}<br>
+                            Status: ${account.status}
+                        </div>
+                    `;
+          });
+          document.getElementById("accountsList").innerHTML = html;
+        } catch (error) {
+          document.getElementById("accountsList").innerHTML =
+            `<div class="error">Error loading accounts</div>`;
+        }
+      }
+
+      // Load accounts on page load
+      loadAccounts();
+    </script>
+  </body>
+</html>
