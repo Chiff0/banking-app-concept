@@ -34,21 +34,21 @@ public class CurrencyConverter
       rates.putIfAbsent(from, new HashMap<>());
       
       try {
-        ConverterResponse response = converterClient.getRates(from.toString())
+        ConverterResponse response = converterClient.getRates(from.toString());
 
         for (Currency to : Currency.values())
         {
           if(to == from)
           {
-            rates.get(from).put(to, 1)
+            rates.get(from).put(to, 1.0);
           }
           else 
           {
-            Double rate = response.rates.get(to.toString())
+            Double rate = response.rates.get(to.toString());
             
             if (rate != null)
             {
-              rates.get(from).put(to, rate)
+              rates.get(from).put(to, rate);
             }
           }
         }
@@ -63,9 +63,9 @@ public class CurrencyConverter
   {
     return rates.getOrDefault(from, new HashMap<>()).getOrDefault(to, 1.0);
   }
-  public Currency convert(Money fromMoney, currency to)
+  public Currency convert(Money fromMoney, Currency to)
   {
-    from = fromMoney.currency;
+    Currency from = fromMoney.currency;
     if (from == to)
     {
       return fromMoney;
@@ -73,7 +73,7 @@ public class CurrencyConverter
     else
     {
       double rate = getRate(from, to);
-      Money temp = new Money(from * rate, to);
+      Money temp = new Money(fromMoney.amount * rate, to);
 
       return temp;
     }

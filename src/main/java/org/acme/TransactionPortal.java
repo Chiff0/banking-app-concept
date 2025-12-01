@@ -13,6 +13,10 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class TransactionPortal
 {
+  @Inject
+  CurrencyConverter converter;
+
+
   @POST
   @Path("/deposit")
   public TransactionHistory deposit(DepositRequest request)
@@ -78,6 +82,11 @@ public class TransactionPortal
   {
     Account source = Account.findByAccountNumber(request.fromID);
     Account destination = Account.findByAccountNumber(request.toID);
+
+    if (source.balance.currency != destination.balance.currency)
+    {
+      source.balance = converter.convert(source.balance, destination.balance.currency);
+    }
     
     TransactionHistory newTransaction = new TransactionHistory();
     newTransaction.type = TransactionType.Transfer;

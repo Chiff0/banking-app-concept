@@ -30,7 +30,7 @@ public class UserPortal
     @Path("/accounts")
     public List<Account> listAllAccounts() 
     {
-        List<Customer> allAccounts = Account.listAll();
+        List<Account> allAccounts = Account.listAll();
         return allAccounts;
     }
 
