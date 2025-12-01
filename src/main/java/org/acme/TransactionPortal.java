@@ -37,26 +37,61 @@ public class TransactionPortal
     return newTransaction; 
   }
 
+    @POST
+    @Path("/withdraw")
+    public TransactionHistory withdraw(WithdrawRequest request)
+    {
+      TransactionHistory newTransaction = new TransactionHistory();
+      Account destination = Account.findByAccountNumber(request.accountNumber);
+      newTransaction.type = TransactionType.Withdrawal; 
+      newTransaction.amount = request.amount;
+      
+      if (destination != null)
+      {
+        newTransaction.accountTo = destination;
+        newTransaction.status = TransactionStatus.Completed;
+        destination.balance.amount += request.amount.amount;
+        
+        if (destination.balance.amount >= request.amount.amount)
+        {
+          destination.balance.amount -= request.amount.amount; 
+
+          newTransaction.status = TransactionStatus.Completed;
+
+          newTransaction.persist();
+          return newTransaction;
+        }
+
+      }
+
+      newTransaction.status = TransactionStatus.Declined;
+      
+      
+      newTransaction.persist();
+      return newTransaction; 
+    }
+
+
   @POST
   @Path("/transfer")
   public TransactionHistory transfer(TransferRequest request)
   {
-    Account accountFrom = Account.findByAccountNumber(request.fromID);
-    Account accountTo = Account.findByAccountNumber(request.toID);
+    Account source = Account.findByAccountNumber(request.fromID);
+    Account destination = Account.findByAccountNumber(request.toID);
     
     TransactionHistory newTransaction = new TransactionHistory();
     newTransaction.type = TransactionType.Transfer;
     newTransaction.amount = request.amount;
 
-    if (accountFrom != null && accountTo != null)
+    if (source != null && destination != null)
     {
-      newTransaction.accountFrom = accountFrom;
-      newTransaction.accountTo = accountTo;
+      newTransaction.accountFrom = source;
+      newTransaction.accountTo = destination;
 
-      if (accountFrom.balance.amount >= request.amount.amount)
+      if (source.balance.amount >= request.amount.amount)
       {
-        accountFrom.balance.amount -= request.amount.amount;
-        accountTo.balance.amount += request.amount.amount;
+        source.balance.amount -= request.amount.amount;
+        destination.balance.amount += request.amount.amount;
 
         newTransaction.status = TransactionStatus.Completed;
         
