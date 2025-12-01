@@ -49,6 +49,7 @@ public class CurrencyConverter
             if (rate != null)
             {
               rates.get(from).put(to, rate);
+              System.out.println("Added new rate: " + from.toString() + " -> " + to.toString() + ": " + rate.toString());
             }
           }
         }
@@ -63,7 +64,7 @@ public class CurrencyConverter
   {
     return rates.getOrDefault(from, new HashMap<>()).getOrDefault(to, 1.0);
   }
-  public Currency convert(Money fromMoney, Currency to)
+  public Money convert(Money fromMoney, Currency to)
   {
     Currency from = fromMoney.currency;
     if (from == to)

@@ -4,7 +4,7 @@ import jakarta.ws.rs.*;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient
-public class ConverterAPIClient
+public interface ConverterAPIClient
 {
   @GET
   @Path("/latest")

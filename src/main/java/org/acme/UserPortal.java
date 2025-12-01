@@ -34,6 +34,20 @@ public class UserPortal
         return allAccounts;
     }
 
+    @GET 
+    @Path("/accounts/{accountNumber}")
+    public Account searchAccount(@PathParam("accountNumber") String accountNumber)
+    {
+      return Account.findByAccountNumber(accountNumber);
+    }
+
+    @GET
+    @Path("/users/{id}")
+    public Customer searchCustomer(@PathParam("id") String id)
+    {
+      return Customer.findByIDNumber(id);
+    }
+
     
 
     @POST
