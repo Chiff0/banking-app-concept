@@ -1,7 +1,7 @@
-package org.acme
+package org.acme;
 
 import jakarta.enterprise.context.*;
-import java.util.*
+import java.util.*;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -61,7 +61,7 @@ public class CurrencyConverter
 
   public double getRate(Currency from, Currency to)
   {
-    return rates.getOrDefault(from.Currency, new HashMap<>()).getOrDefault(to, 1.0)
+    return rates.getOrDefault(from, new HashMap<>()).getOrDefault(to, 1.0);
   }
   public Currency convert(Money fromMoney, currency to)
   {
@@ -73,7 +73,7 @@ public class CurrencyConverter
     else
     {
       double rate = getRate(from, to);
-      Money temp = new Money(fromMoney * rate, to);
+      Money temp = new Money(from * rate, to);
 
       return temp;
     }

@@ -28,7 +28,7 @@ public class UserPortal
     
     @GET
     @Path("/accounts")
-    public List<Customer> listAllAccounts() 
+    public List<Account> listAllAccounts() 
     {
         List<Customer> allAccounts = Account.listAll();
         return allAccounts;

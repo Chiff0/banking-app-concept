@@ -7,6 +7,6 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public class ConverterAPIClient
 {
   @GET
-  @Path(/latest)
+  @Path("/latest")
   ConverterResponse getRates(@QueryParam("from") String currency);
 }
