@@ -82,10 +82,20 @@ public class UserPortal
       return customer;
     }
 
+    @DELETE
+    @Transactional
+    @Path("/accounts/{accountNumber}")
+    public void deleteAccount(@PathParam("accountNumber") String accountNumber) {
+      Account account = Account.findByAccountNumber(accountNumber);
+      if (account != null) {
+          account.delete();
+      }
+    }
+
     @PUT
     @Path("/{id}")
     @Transactional
-    public Account updateAccount(@PathParam("id") long id, AccountRequest request)
+    public Account updateAccount(@PathParam("id") String id, AccountRequest request)
     {
       Account account = Account.findById(id);
       if (account != null)

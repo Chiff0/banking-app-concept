@@ -39,7 +39,14 @@
       button:hover {
         background: #0056b3;
       }
-      .account-card {
+      button.danger {
+        background: #dc3545;
+      }
+      button.danger:hover {
+        background: #c82333;
+      }
+      .account-card,
+      .customer-card {
         border: 1px solid #ddd;
         padding: 15px;
         margin: 10px 0;
@@ -58,6 +65,11 @@
         background: #f8d7da;
         border-radius: 4px;
         margin: 10px 0;
+      }
+      .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
       }
     </style>
   </head>
@@ -122,6 +134,28 @@
       <div id="depositResult"></div>
     </div>
 
+    <!-- Withdraw -->
+    <div class="container">
+      <h2>Withdraw</h2>
+      <input
+        type="text"
+        id="withdrawAccount"
+        placeholder="Account Number (ACC-...)"
+      />
+      <input type="number" id="withdrawAmount" placeholder="Amount" />
+      <select id="withdrawCurrency">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="JPY">JPY</option>
+        <option value="CNY">CNY</option>
+        <option value="PLN">PLN</option>
+        <option value="CAD">CAD</option>
+        <option value="AUD">AUD</option>
+      </select>
+      <button onclick="withdraw()">Withdraw</button>
+      <div id="withdrawResult"></div>
+    </div>
+
     <!-- Transfer -->
     <div class="container">
       <h2>Transfer</h2>
@@ -145,11 +179,31 @@
       <div id="transferResult"></div>
     </div>
 
-    <!-- View Accounts -->
+    <!-- Delete Account -->
     <div class="container">
-      <h2>All Accounts</h2>
-      <button onclick="loadAccounts()">Refresh Accounts</button>
-      <div id="accountsList"></div>
+      <h2>Delete Account</h2>
+      <input
+        type="text"
+        id="deleteAccountNumber"
+        placeholder="Account Number (ACC-...)"
+      />
+      <button class="danger" onclick="deleteAccount()">Delete Account</button>
+      <div id="deleteResult"></div>
+    </div>
+
+    <!-- View Customers and Accounts -->
+    <div class="two-column">
+      <div class="container">
+        <h2>All Customers</h2>
+        <button onclick="loadCustomers()">Refresh Customers</button>
+        <div id="customersList"></div>
+      </div>
+
+      <div class="container">
+        <h2>All Accounts</h2>
+        <button onclick="loadAccounts()">Refresh Accounts</button>
+        <div id="accountsList"></div>
+      </div>
     </div>
 
     <script>
@@ -171,6 +225,7 @@
           const result = await response.json();
           document.getElementById("customerResult").innerHTML =
             `<div class="success">Customer created! ID: ${result.idnumber}</div>`;
+          loadCustomers();
         } catch (error) {
           document.getElementById("customerResult").innerHTML =
             `<div class="error">Error: ${error}</div>`;
@@ -193,6 +248,7 @@
           const result = await response.json();
           document.getElementById("accountResult").innerHTML =
             `<div class="success">Account created! Number: ${result.accountNumber}</div>`;
+          loadAccounts();
         } catch (error) {
           document.getElementById("accountResult").innerHTML =
             `<div class="error">Error: ${error}</div>`;
@@ -224,6 +280,31 @@
         }
       }
 
+      async function withdraw() {
+        const data = {
+          accountNumber: document.getElementById("withdrawAccount").value,
+          amount: {
+            amount: parseFloat(document.getElementById("withdrawAmount").value),
+            currency: document.getElementById("withdrawCurrency").value,
+          },
+        };
+
+        try {
+          const response = await fetch(`${API}/withdraw`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          document.getElementById("withdrawResult").innerHTML =
+            `<div class="success">Withdrawal ${result.status}!</div>`;
+          loadAccounts();
+        } catch (error) {
+          document.getElementById("withdrawResult").innerHTML =
+            `<div class="error">Error: ${error}</div>`;
+        }
+      }
+
       async function transfer() {
         const data = {
           fromID: document.getElementById("transferFrom").value,
@@ -250,6 +331,60 @@
         }
       }
 
+      async function deleteAccount() {
+        const accountNumber = document.getElementById(
+          "deleteAccountNumber",
+        ).value;
+
+        if (
+          !confirm(`Are you sure you want to delete account ${accountNumber}?`)
+        ) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`${API}/accounts/${accountNumber}`, {
+            method: "DELETE",
+          });
+
+          if (response.ok || response.status === 204) {
+            document.getElementById("deleteResult").innerHTML =
+              `<div class="success">Account deleted successfully!</div>`;
+            loadAccounts();
+          } else {
+            document.getElementById("deleteResult").innerHTML =
+              `<div class="error">Failed to delete account</div>`;
+          }
+        } catch (error) {
+          document.getElementById("deleteResult").innerHTML =
+            `<div class="error">Error: ${error}</div>`;
+        }
+      }
+
+      async function loadCustomers() {
+        try {
+          const response = await fetch(`${API}/users`);
+          const customers = await response.json();
+
+          let html = "";
+          customers.forEach((customer) => {
+            html += `
+                        <div class="customer-card">
+                            <strong>${customer.name}</strong><br>
+                            ID: ${customer.idnumber}<br>
+                            DOB: ${customer.dateOfBirth}<br>
+                            Address: ${customer.address}
+                        </div>
+                    `;
+          });
+          document.getElementById("customersList").innerHTML =
+            html || "<p>No customers found</p>";
+        } catch (error) {
+          document.getElementById("customersList").innerHTML =
+            `<div class="error">Error loading customers</div>`;
+        }
+      }
+
       async function loadAccounts() {
         try {
           const response = await fetch(`${API}/accounts`);
@@ -260,20 +395,22 @@
             html += `
                         <div class="account-card">
                             <strong>${account.accountNumber}</strong> - ${account.type}<br>
-                            Balance: ${account.balance.amount} ${account.balance.currency}<br>
+                            Balance: ${account.balance.amount.toFixed(2)} ${account.balance.currency}<br>
                             Owner: ${account.owner.name}<br>
                             Status: ${account.status}
                         </div>
                     `;
           });
-          document.getElementById("accountsList").innerHTML = html;
+          document.getElementById("accountsList").innerHTML =
+            html || "<p>No accounts found</p>";
         } catch (error) {
           document.getElementById("accountsList").innerHTML =
             `<div class="error">Error loading accounts</div>`;
         }
       }
 
-      // Load accounts on page load
+      // Load customers and accounts on page load
+      loadCustomers();
       loadAccounts();
     </script>
   </body>
